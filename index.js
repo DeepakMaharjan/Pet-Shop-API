@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const morgan = require('morgan');
 const userRouter = require('./routes/users');
 const uploadUserProfile = require('./routes/uploadUserImg');
+const productRouter = require('./routes/products');
+const uploadProductImg = require('./routes/uploadProductImg');
 const dotenv = require('dotenv').config();
 const auth = require('./auth');
 const cors = require('cors');
@@ -21,8 +23,13 @@ mongoose.connect(process.env.URL, { useNewUrlParser: true, useUnifiedTopology: t
     }, (err) => console.log(err));
 
     app.use('/users', userRouter);
-    app.use('/upload', uploadUserProfile);
+    app.use('/uploadProfile', uploadUserProfile);
+
     app.use(auth.verifyUser);
+
+    app.use('/products', productRouter);
+    app.use('/uploadProductImg', uploadProductImg);
+
 
     app.use((err, req, res, next) => {
         console.error(err.stack);
