@@ -1,10 +1,11 @@
 const express = require('express');
 const Product = require('../models/products');
+const auth = require('../auth');
 
 const router = express.Router();
 
 router.route('/')
-    .get((req,res,next)=>{
+    .get(auth.verifyUser,(req,res,next)=>{
         Product.find({adminId: req.user._id})
             .then((products) => {
                 res.json(products);
@@ -12,7 +13,8 @@ router.route('/')
             .catch((err) => next(err));
     })
 
-    .post((req,res,next) => {
+
+    .post(auth.verifyUser,(req,res,next) => {
         let products = new Product(req.body);
 
         products.adminId = req.user._id;
@@ -69,5 +71,15 @@ router.route('/:id')
                 res.json(reply);  
         }).catch(next);
     })
+
+    
+ 
+    // router.get('/fetchBlanket',auth.verifyUser,(req,res,next)=>{
+    //     Product.find({productCategory: Blanket})
+    //     .then((result)=>{
+    //         res.json(result)
+    //     })
+    //     .catch(next)
+    // })
 
     module.exports = router;

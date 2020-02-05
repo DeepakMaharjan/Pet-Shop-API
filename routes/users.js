@@ -54,29 +54,30 @@ router.post('/login', (req, res, next) => {
 })
 
 router.get('/me',auth.verifyUser,(req,res,next)=>{
-    res.json({
-        _id:req.user._id,
-        profileImage: req.user.profileImage,
-        username: req.user.username,
-        phoneNo: req.user.phoneNo,
-        email: req.user.email,
-        gender: req.user.gender,
-        address: req.user.address
-    });
+   User.findById({_id: req.user._id})
+   .then((result) => {
+       res.json(result)
+   })
+   .catch(next)
 });
 
-router.put('/me', auth.verifyUser, (req, res, next) => {
-    User.findByIdAndUpdate(req.user._id, { $set: req.body }, { new: true })
-        .then((user) => {
-            res.json({ 
-                _id:req.user._id,
-                profileImage: req.body.profileImage,
-                username: req.body.username,
-                phoneNo: req.body.phoneNo,
-                email: req.body.email,
-                gender: req.body.gender,
-                address: req.body.address });
-        }).catch(next);
+router.get('/user',auth.verifyUser,(req,res,next)=>{
+    User.find({admin:false})
+    .then((result)=>{
+        res.json(result)
+    })
+    .catch(next)
+})
+
+router.put('/updateProfile', auth.verifyUser,(req,res,next) => {
+    User.findOneAndUpdate({_id: req.body._id}, req.body, {new: true}, (err, doc) => {
+        if(!err){
+            res.json({ status: 'Profile Updated'});
+        } else {
+            Console.log('Error' + err);
+            res.json('Error while update!');
+        }
+    });
 });
 
 module.exports = router;

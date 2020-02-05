@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require("path");
+const auth = require("../auth");
 
 const storage = multer.diskStorage({
     destination: "./public/uploads/products",
@@ -25,7 +26,7 @@ const upload = multer({
 const uploadProductImgRouter = express.Router();
 
 uploadProductImgRouter.route('/')
-    .post(upload.single('productImage'), (req, res) => {    
+    .post(upload.single('productImage'),auth.verifyUser, (req, res) => {    
         res.json(req.file);
     });
 
