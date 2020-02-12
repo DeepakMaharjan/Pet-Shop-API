@@ -3,6 +3,16 @@ const Product = require('../models/products');
 
 const router = express.Router();
 
+router.get('/allProducts',(req,res,next)=>{
+    Product.find({},(err,product)=>
+    {
+        if(err){
+            res.json(next)
+        }
+        res.json(product)
+    });
+})
+
 router.get('/catBlanket',(req,res,next)=>{
     Product.find({productCategory: "Blanket"},(err,product)=>
     {
@@ -24,4 +34,6 @@ router.get('/catBracelet',(req,res,next)=>{
         res.json(product)
     });
 })
+
+
 module.exports = router;

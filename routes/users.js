@@ -24,7 +24,7 @@ router.post('/signup', (req, res, next) => {
             address: req.body.address,
         }).then((user) => {
             let token = jwt.sign({_id: user._id}, process.env.SECRET);
-            res.json({status: "Signup Success!", token: token});
+            res.json({status: "Signup Success!", token: token, isSuccess: true});
         }).catch(next);
     });
 });
@@ -46,8 +46,10 @@ router.post('/login', (req, res, next) => {
                             err.status = 401;
                             return next(err);
                         }
+                         
                         let token = jwt.sign({ _id: user._id }, process.env.SECRET);
-                        res.json({ status: 'Login success!', token: token });
+                        res.json({ status: 'Login success!', token: token , isSuccess: true});
+                        
                     }).catch(next);
             }
         }).catch(next);
@@ -79,5 +81,7 @@ router.put('/updateProfile', auth.verifyUser,(req,res,next) => {
         }
     });
 });
+
+
 
 module.exports = router;

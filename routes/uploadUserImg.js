@@ -26,6 +26,8 @@ const uploadUserImgRouter = express.Router();
 
 uploadUserImgRouter.route('/')
     .post(upload.single('profileImage'), (req, res) => {    
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
         res.json(req.file);
     });
 

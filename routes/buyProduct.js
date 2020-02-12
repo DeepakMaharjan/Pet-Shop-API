@@ -1,27 +1,28 @@
 const express = require('express');
-const Product = require('../models/products');
+const Buy = require('../models/buy');
 const auth = require('../auth');
 
 const router = express.Router();
 
 router.route('/')
     .get(auth.verifyUser,(req,res,next)=>{
-        Product.find({adminId: req.user._id})
-            .then((products) => {
-                res.json(products);
+        Buy.find({userId: req.user._id})
+            .then((buy) => {
+                res.json(buy);
             })
             .catch((err) => next(err));
     })
 
 
     .post(auth.verifyUser,(req,res,next) => {
-        let products = new Product(req.body);
 
-        products.adminId = req.user._id;
-        products.save()
-            .then((products) => {
+        let buy = new Buy(req.body);
+
+        buy.userId = req.user._id;
+        buy.save()
+            .then((buy) => {
                 res.statusCode = 201;
-                res.json(products);
+                res.json(buy);
             }).catch(next);
     })
 
@@ -31,7 +32,7 @@ router.route('/')
     })
 
     .delete((req,res,next) => {
-        Product.deleteMany({ adminId: req.user._id})
+        Buy.deleteMany({ userId: req.user._id})
             .then((reply) => {
                 res.json(reply);
             })
@@ -41,16 +42,16 @@ router.route('/')
 
 router.route('/:id')
     .get((req,res,next) => {
-        Product.findOne({adminId: req.user._id, _id: req.params.id})
-            .then((products) => {
-                if(products == null)
-                    throw new Error("No product found!")
-                    res.json(products);
+        Buy.findOne({userId: req.user._id, _id: req.params.id})
+            .then((buy) => {
+                if(buy == null)
+                    throw new Error("No Buy found!")
+                    res.json(buy);
             }).catch(next);
     })
 
     .delete((req,res,next) => {
-        Product.findByIdAndDelete({_id: req.params.id})
+        Buy.findByIdAndDelete({_id: req.params.id})
             .then((reply) => {
                 res.json(reply);
             })
@@ -64,7 +65,7 @@ router.route('/:id')
     })
 
     .put((req,res,next) => {
-        Product.findOneAndUpdate({
+        Buy.findOneAndUpdate({
             adminId: req.user._id,
             _id: req.params.id
         },
@@ -76,20 +77,11 @@ router.route('/:id')
         })
         .then((reply) => {
             if(reply == null)
-                throw new Error ("Product not found!");
+                throw new Error ("Buy not found!");
                 res.json(reply);  
         }).catch(next);
     })
 
     
-    router.put('/updateProduct', auth.verifyUser,(req,res,next) => {
-        Product.findOneAndUpdate({adminId: req.user._id,_id: req.params._id},{$set: req.body}, {new: true}, (err, doc) => {
-            if(!err){
-                res.json({ status: 'Profile Updated'});
-            } else {
-                Console.log('Error' + err);
-                res.json('Error while update!');
-            }
-        });
-    });
+
     module.exports = router;

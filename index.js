@@ -6,6 +6,7 @@ const uploadUserProfile = require('./routes/uploadUserImg');
 const productRouter = require('./routes/products');
 const uploadProductImg = require('./routes/uploadProductImg');
 const fetchProductDetails = require('./routes/fetchProduct');
+const buyProduct = require('./routes/buyProduct');
 const dotenv = require('dotenv').config();
 const auth = require('./auth');
 const cors = require('cors');
@@ -23,22 +24,19 @@ mongoose.connect(process.env.URL, { useNewUrlParser: true, useUnifiedTopology: t
         console.log("Successfully connected to MongodB server");
     }, (err) => console.log(err));
 
-
-    
+    app.use(cors());
 
     app.use('/users', userRouter);
     app.use('/uploadProfile', uploadUserProfile);
     app.use('/fetchProducts', fetchProductDetails);
     
-    app.use(auth.verifyUser);
 
     app.use('/products', productRouter);
     app.use('/uploadProductImg', uploadProductImg);
-    
+    app.use('/buyProducts', buyProduct);
+    app.use(auth.verifyUser);
 
     
-
-
     app.use((err, req, res, next) => {
         console.error(err.stack);
         res.statusCode = 500;
